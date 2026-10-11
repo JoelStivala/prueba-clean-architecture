@@ -9,9 +9,21 @@ namespace ToDo.Infrastructure.Data.Entities.Repositories
     {
         private readonly ToDoDbContext _dbContext;
 
-        public ToDoTaskRepository(ToDoDbContext dbContext) 
-        { 
+        public ToDoTaskRepository(ToDoDbContext dbContext)
+        {
             _dbContext = dbContext;
+        }
+
+        public async Task<GetToDoTaskDto?> Get(int id)
+        {
+            return await _dbContext.ToDoTasks
+                .Where(t => t.Id == id && !t.Deleted.HasValue)
+                .Select(t => new GetToDoTaskDto
+                {
+                    Id = t.Id,
+                    Task = t.Task,
+                    Created = t.Created,
+                }).SingleOrDefaultAsync();
         }
         public async Task Create(CreateToDoTaskDto createToDoTask)
         {
@@ -22,6 +34,22 @@ namespace ToDo.Infrastructure.Data.Entities.Repositories
             });
 
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<bool> Update(int id, UpdateToDoTaskDto updateToDoTask)
+        {
+            var toDoTask = _dbContext.ToDoTasks.SingleOrDefault(t => t.Id == id && !t.Deleted.HasValue);
+
+            if (toDoTask == null)
+            {
+                return false;
+            }
+
+            toDoTask.Task = updateToDoTask.Task;
+
+            await _dbContext.SaveChangesAsync();
+            
+            return true;
         }
     }
 }

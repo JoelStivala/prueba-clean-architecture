@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using ToDo.Application.Common.Dto;
 using ToDo.Application.Services;
+using ToDo.Application.Services.Implementations;
 using ToDo.Infrastructure.Data.Entities;
 
 namespace ToDo.Api.Endpoints
@@ -15,6 +17,13 @@ namespace ToDo.Api.Endpoints
                 .ProducesValidationProblem()
                 .ProducesProblem(StatusCodes.Status500InternalServerError);
 
+            group.MapGet("/{id:int}", Get)
+                .ProducesProblem(StatusCodes.Status500InternalServerError);
+
+            group.MapPut("/{id:int}", Update)
+                .ProducesValidationProblem()
+                .ProducesProblem(StatusCodes.Status500InternalServerError);
+
             return app;
         }
 
@@ -26,6 +35,29 @@ namespace ToDo.Api.Endpoints
             await toDoTaskService.Create(createToDoTask);
 
             return TypedResults.Created();
+        }
+
+        public static async Task<Results<Ok<GetToDoTaskDto>, NotFound>> Get(int id, IToDoTaskService toDoTaskService)
+        {
+            var toDoTask = await toDoTaskService.Get(id);
+
+            if(toDoTask == null)
+                return TypedResults.NotFound();
+
+            return TypedResults.Ok(toDoTask);
+        }
+
+        public static async Task<Results<NoContent, NotFound>> Update(int id,
+            UpdateToDoTaskDto updateToDoTask,
+            IToDoTaskService toDoTaskService
+            )
+        {
+            var result = await toDoTaskService.Update(id, updateToDoTask);
+
+            if (!result)
+                return TypedResults.NotFound();
+
+            return TypedResults.NoContent();
         }
     }
 }

@@ -12,9 +12,19 @@ namespace ToDo.Application.Services.Implementations
         {
             _toDoTaskRepository = toDoTaskRepository;
         }
+
+        public async Task<GetToDoTaskDto?> Get(int id)
+        {
+            return await _toDoTaskRepository.Get(id);
+        }
+
         public async Task Create(CreateToDoTaskDto createToDoTask)
         {
             await _toDoTaskRepository.Create(createToDoTask);
+        }
+        public async Task<bool> Update(int id, UpdateToDoTaskDto updateToDoTask)
+        {
+            return await _toDoTaskRepository.Update(id, updateToDoTask);
         }
     }
 }
