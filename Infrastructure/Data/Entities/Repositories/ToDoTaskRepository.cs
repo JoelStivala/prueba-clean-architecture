@@ -51,5 +51,19 @@ namespace ToDo.Infrastructure.Data.Entities.Repositories
             
             return true;
         }
+
+        public async Task<bool> Delete(int id)
+        {
+            var toDoTask = _dbContext.ToDoTasks.SingleOrDefault(t => t.Id == id && !t.Deleted.HasValue);
+
+            if (toDoTask == null)
+                return false;
+            
+            toDoTask.Deleted = DateTime.UtcNow;
+
+            await _dbContext.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

@@ -24,6 +24,9 @@ namespace ToDo.Api.Endpoints
                 .ProducesValidationProblem()
                 .ProducesProblem(StatusCodes.Status500InternalServerError);
 
+            group.MapDelete("/{id:int}", Delete)
+                .ProducesProblem(StatusCodes.Status500InternalServerError);
+
             return app;
         }
 
@@ -53,6 +56,19 @@ namespace ToDo.Api.Endpoints
             )
         {
             var result = await toDoTaskService.Update(id, updateToDoTask);
+
+            if (!result)
+                return TypedResults.NotFound();
+
+            return TypedResults.NoContent();
+        }
+
+        public static async Task<Results<NoContent, NotFound>> Delete(
+            int id,
+            IToDoTaskService toDoTaskService
+            )
+        {
+            var result = await toDoTaskService.Delete(id);
 
             if (!result)
                 return TypedResults.NotFound();
