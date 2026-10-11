@@ -8,4 +8,8 @@
 	<AssebmlyName>ToDo.Application</AssebmlyName>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
+  </ItemGroup>
+
 </Project>
