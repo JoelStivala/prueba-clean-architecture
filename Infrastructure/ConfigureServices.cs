@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ToDo.Application.Data.Repositories;
 using ToDo.Infrastructure.Data;
+using ToDo.Infrastructure.Data.Entities.Repositories;
 
 namespace ToDo.Infrastructure
 {
@@ -18,6 +20,15 @@ namespace ToDo.Infrastructure
                     configuration.GetConnectionString("ToDoDbContext")
                     );
             });
+            return services;
+        }
+
+        public static IServiceCollection AddDataRepositories(
+            this IServiceCollection services
+            )
+        {
+            services.AddScoped<IToDoTaskRepository, ToDoTaskRepository>();
+
             return services;
         }
     }
