@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 using ToDo.Application.Services;
 using ToDo.Application.Services.Implementations;
 
@@ -12,5 +14,17 @@ namespace ToDo.Application
 
             return services;
         }
-    }
+
+        public static ConfigureHostBuilder AddSerilogLogging(
+            this ConfigureHostBuilder host
+            )
+        {
+            host.UseSerilog((context, loggerConfiguration) =>
+            {
+                loggerConfiguration.ReadFrom.Configuration(context.Configuration);
+            });
+
+            return host;
+        }
+    }     
 }
