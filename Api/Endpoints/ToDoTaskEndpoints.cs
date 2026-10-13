@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using ToDo.Application.Common.Dto;
+using ToDo.Application.Common.Filters;
 using ToDo.Application.Services;
 using ToDo.Application.Services.Implementations;
 using ToDo.Infrastructure.Data.Entities;
@@ -12,6 +13,7 @@ namespace ToDo.Api.Endpoints
         public static WebApplication MapToDoTaskEndpoints(this WebApplication app)
         {
             var group = app.MapGroup("/api/to-do-tasks")
+                .AddEndpointFilter<ToDoTaskEndpointFilter>()
                 .ProducesProblem(StatusCodes.Status500InternalServerError);
 
             group.MapPost("/", Create)
