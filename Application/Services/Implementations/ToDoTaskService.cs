@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+﻿using Microsoft.Extensions.Logging;
 using ToDo.Application.Common.Dto;
 using ToDo.Application.Data.Repositories;
 
@@ -7,14 +7,19 @@ namespace ToDo.Application.Services.Implementations
     public class ToDoTaskService : IToDoTaskService
     {
         private readonly IToDoTaskRepository _toDoTaskRepository;
+        private readonly ILogger<ToDoTaskService> _logger;
 
-        public ToDoTaskService(IToDoTaskRepository toDoTaskRepository)
+        public ToDoTaskService(
+            IToDoTaskRepository toDoTaskRepository,
+            ILogger<ToDoTaskService> logger)
         {
             _toDoTaskRepository = toDoTaskRepository;
+            _logger = logger;
         }
 
         public async Task<GetToDoTaskDto?> Get(int id)
         {
+            _logger.LogDebug("Running get method with id: {Id}", id);
             return await _toDoTaskRepository.Get(id);
         }
 

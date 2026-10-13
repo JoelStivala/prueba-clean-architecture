@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using ToDo.Application.Common.Dto;
 using ToDo.Application.Common.Filters;
 using ToDo.Application.Services;
-using ToDo.Application.Services.Implementations;
-using ToDo.Infrastructure.Data.Entities;
 
 namespace ToDo.Api.Endpoints
 {
@@ -42,12 +39,24 @@ namespace ToDo.Api.Endpoints
             return TypedResults.Created();
         }
 
-        public static async Task<Results<Ok<GetToDoTaskDto>, NotFound>> Get(int id, IToDoTaskService toDoTaskService)
+        public static async Task<Results<Ok<GetToDoTaskDto>, NotFound>> Get(
+            int id, 
+            IToDoTaskService toDoTaskService,
+            ILoggerFactory loggerFactory)
         {
+            var logger = loggerFactory.CreateLogger(typeof(ToDoTaskEndpoints).FullName!);
+
+            logger.LogDebug("Running get method with id: {Id}", id);
+
             var toDoTask = await toDoTaskService.Get(id);
 
             if(toDoTask == null)
+            {
+                logger.LogDebug("Task with id {Id} not found", id);
                 return TypedResults.NotFound();
+            }
+
+            logger.LogDebug("Task found id: {Id}", id);
 
             return TypedResults.Ok(toDoTask);
         }
